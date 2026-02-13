@@ -37,19 +37,19 @@ cp .env.example .env
 
 Edit `.env` and add your API keys:
 
-- `GOOGLE_API_KEY`: **Required**. Get it from [Google AI Studio](https://aistudio.google.com/).
+- **Ollama**: Ensure [Ollama](https://ollama.com/) is installed and running (`ollama serve`). Run `ollama pull llama3` to get the model.
 
 ## 3. Run Application
 
-### Option A: Web Interface (Streamlit)
+### Option A: Web Interface (FastAPI)
 
 This is the primary interface for testing RAG and Chat.
 
 ```bash
-streamlit run src/app/ui.py
+uvicorn src.api.main:app --reload
 ```
 
-_Access at: http://localhost:8501_
+_Access at: http://localhost:8000_
 
 ### Option B: CLI
 
@@ -63,8 +63,8 @@ python src/cli/main.py --help
 
 Ingest a test document to verify the pipeline:
 
-1.  Open the Streamlit App.
-2.  Go to **Ingest Document**.
+1.  Open the Web App (`http://localhost:8000`).
+2.  Go to **Ingest**.
 3.  Paste some text (e.g., "The release process requires approval from QA.").
 4.  Click **Ingest**.
     - _Note: The first time, it will download the embedding model (~130MB)._

@@ -28,7 +28,7 @@ Develop a Generative AI agent to function as a Standard Operating Procedure (SOP
 4.  **Security & Compliance**:
     - **Audit Trails**: Log every "Manager Action" suggestion (LangSmith / Arize Phoenix).
     - **PII Masking**: Middleware layer (Presidio) to scrub sensitive data before LLM inference.
-5.  **LLM**: Google Gemini 2.0 Flash.
+5.  **LLM**: Ollama (Llama 3).
 
 ## Proposed Architecture Logic
 
@@ -39,7 +39,7 @@ Develop a Generative AI agent to function as a Standard Operating Procedure (SOP
   - **Orchestrator**: LlamaIndex workflows for routing (e.g., "Technical Eval" vs "HR Issue").
   - **Storage**: LanceDB embedded database.
   - **Middleware**: Presidio for PII scrubbing -> Audit Log -> LLM.
-- **LLM Interface**: Google Gemini 2.0 Flash.
+- **LLM Interface**: Ollama (Llama 3).
 
 ## Next Steps
 

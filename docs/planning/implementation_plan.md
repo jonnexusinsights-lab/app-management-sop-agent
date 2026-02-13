@@ -2,14 +2,14 @@
 
 ## Goal Description
 
-Build an Agentic RAG system that uses Google Gemini 2.0 Flash to provide SOP guidance to managers. The system will ingest multi-modal documentation from Notion/Google Docs, mask PII, and provide auditable answers via CLI and Web App.
+Build an Agentic RAG system that uses local Ollama (Llama 3) to provide SOP guidance to managers. The system will ingest multi-modal documentation from Notion/Google Docs, mask PII, and provide auditable answers via CLI and Web App.
 
 ## User Review Required
 
 > [!IMPORTANT]
 > **API Keys & Credentials**:
 >
-> - Google Gemini API Key
+> - Ollama (Local)
 > - LangSmith/Arize Phoenix API Key (for audit trails)
 > - Notion API Token & Google Docs Service Account (for ingestion)
 
@@ -50,7 +50,7 @@ Build an Agentic RAG system that uses Google Gemini 2.0 Flash to provide SOP gui
 
 #### [NEW] `src/rag/engine.py`
 
-- Query engine setup using Gemini 2.0 Flash.
+- Query engine setup using Ollama (Llama 3).
 - Routing logic (Agentic behavior) to select the right retrieval strategy.
 
 ### Agentic Layer
@@ -86,9 +86,9 @@ Build an Agentic RAG system that uses Google Gemini 2.0 Flash to provide SOP gui
 
 ### Manual Verification
 
-1.  **Ingest** a sample "Conflict Resolution" SOP (PDF/Markdown).
-2.  **Ask** via CLI: "How do I handle a dispute?"
-3.  **Verify**:
-    - The answer cites the correct SOP section.
-    - The PII (if any) in the logs is masked.
-    - The interaction appears in the audit trail (LangSmith/Arize).
+1. **Ingest** a sample "Conflict Resolution" SOP (PDF/Markdown).
+2. **Ask** via CLI: "How do I handle a dispute?"
+3. **Verify**:
+   - The answer cites the correct SOP section.
+   - The PII (if any) in the logs is masked.
+   - The interaction appears in the audit trail (LangSmith/Arize).
