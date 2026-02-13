@@ -11,9 +11,13 @@ from streamlit.watcher import local_sources_watcher
 from streamlit.watcher.local_sources_watcher import get_module_paths
 
 def patched_get_module_paths(module):
+    # Explicitly warn/skip torch.classes to avoid C++ runtime error
+    if getattr(module, '__name__', '') == 'torch.classes':
+        return []
     try:
         return get_module_paths(module)
-    except RuntimeError:
+    except Exception:
+        # Catch generic exceptions to be safe (RuntimeError, AttributeError, etc.)
         return []
 
 local_sources_watcher.get_module_paths = patched_get_module_paths
