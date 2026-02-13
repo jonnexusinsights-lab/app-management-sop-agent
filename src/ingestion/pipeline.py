@@ -46,20 +46,25 @@ class IngestionPipeline:
             document = Document(text=content, metadata=metadata)
 
             # split document into nodes
-            logger.info("Splitting document into nodes...")
+            logger.info(f"Splitting document of length {len(content)} into nodes using SemanticSplitter...")
             nodes = self.splitter.get_nodes_from_documents([document])
             logger.info(f"Created {len(nodes)} nodes.")
+            if nodes:
+                 logger.info(f"First chunk preview (50 chars): {nodes[0].get_content()[:50]}...")
 
             # Explicitly generate embeddings for each node
             # LanceDBVectorStore.add requires embeddings to be present
             logger.info("Generating embeddings for nodes...")
-            for node in nodes:
+            for i, node in enumerate(nodes):
                 node_embedding = self.embed_model.get_text_embedding(node.get_content())
                 node.embedding = node_embedding
+                # Log every 10th node to avoid spam, or if it's the last one
+                if (i + 1) % 10 == 0 or (i + 1) == len(nodes):
+                    logger.info(f"Generated embedding for node {i + 1}/{len(nodes)}")
 
             # Batch insert into LanceDB using VectorStore
             # This handles metadata serialization and schema creation automatically
-            logger.info("Inserting nodes into LanceDB...")
+            logger.info(f"Inserting {len(nodes)} nodes into LanceDB table '{db_manager.table_name}'...")
             self.vector_store.add(nodes)
             logger.info("Document processing complete.")
 

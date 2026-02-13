@@ -26,15 +26,15 @@ class SOPAgent:
         safe_query = self.sanitizer.sanitize(user_query)
 
         # 2. Log the request (Audit Trail)
-        logger.info(f"Received Query: {safe_query}")
+        logger.info(f"Agent received sanitized query: {safe_query}")
 
         # 3. Route & Retrieve (Simple RAG for now)
         # Future: Use routing_prompt.txt to classify domain
+        logger.info("Delegating to RAGEngine...")
         response = rag_engine.query(safe_query)
 
         # 4. Log the response
-        logger.info(f"Generated Response: {response}")
-
+        logger.info("Agent generated response.")
         return response
 
 # Singleton instance

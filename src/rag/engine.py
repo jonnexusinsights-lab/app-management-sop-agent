@@ -74,7 +74,29 @@ class RAGEngine:
         if self.query_engine is None:
              return "Error: Knowledge Base not initialized. Please ingest a document first."
 
+        from src.observability.logger import logger
+        import time
+
+        logger.info(f"Processing RAG Query: {query_text}")
+        start_time = time.time()
+
+        # Execute Query
         response = self.query_engine.query(query_text)
+
+        end_time = time.time()
+        duration = end_time - start_time
+
+        # Log Retrieval Details
+        if response.source_nodes:
+            logger.info(f"Retrieved {len(response.source_nodes)} source nodes.")
+            for i, node in enumerate(response.source_nodes):
+                # Log score and first 100 chars of content
+                score = node.score if node.score is not None else "N/A"
+                logger.info(f"Node {i+1} (Score: {score}): {node.node.get_content()[:100]}...")
+        else:
+            logger.warning("No source nodes retrieved.")
+
+        logger.info(f"RAG Query completed in {duration:.2f}s. Response length: {len(str(response))}")
         return str(response)
 
 # Singleton instance
