@@ -1,0 +1,31 @@
+[project]
+name = "app-management-sop-agent"
+version = "0.1.0"
+description = "Agentic RAG SOP Assistant for Managers"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "llama-index",
+    "llama-index-llms-gemini",
+    "llama-index-embeddings-gemini",
+    "llama-index-embeddings-huggingface",
+    "llama-index-vector-stores-lancedb",
+    "google-generativeai",
+    "lancedb",
+    "presidio-analyzer",
+    "presidio-anonymizer",
+    "fastapi",
+    "uvicorn",
+    "typer",
+    "python-dotenv",
+    "langsmith",
+    "streamlit",
+    "pydantic-settings"
+]
+
+[tool.setuptools]
+packages = ["src"]
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
