@@ -79,6 +79,12 @@ with tab2:
                 with st.spinner("Chunking and Indexing..."):
                     try:
                         ingestion_pipeline.ingest_from_text(sop_text, source=source_name)
+                        # Reload RAGEngine to see new data immediately
+                        from src.rag.engine import rag_engine
+                        if hasattr(rag_engine, 'reload'):
+                            rag_engine.reload()
+                        else:
+                            st.warning("Backend updated. Please restart the app to apply changes.")
                         st.success(f"Successfully ingested '{source_name}'!")
                     except Exception as e:
                         st.error(f"Ingestion failed: {e}")

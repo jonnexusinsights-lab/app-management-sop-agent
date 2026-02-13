@@ -54,11 +54,11 @@ class IngestionPipeline:
         # This handles metadata serialization and schema creation automatically
         self.vector_store.add(nodes)
 
-    def ingest_from_text(self, text: str):
+    def ingest_from_text(self, text: str, source: str = "manual_entry"):
         """
         Convenience method for testing/CLI.
         """
-        self.process_document(text, {"source_type": "text"})
+        self.process_document(text, {"source_type": "text", "source": source})
 
 # Singleton instance
 ingestion_pipeline = IngestionPipeline()

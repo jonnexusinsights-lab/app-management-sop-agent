@@ -35,18 +35,30 @@ class RAGEngine:
             table_name=db_manager.table_name
         )
 
-        # Create Index from Vector Store
-        # This allows LlamaIndex to query LanceDB
-        self.index = VectorStoreIndex.from_vector_store(
-            vector_store=self.vector_store
-        )
+        self.index = None
+        self.query_engine = None
+        self._initialize_index()
 
-        # Create Query Engine
-        # similarity_top_k=5 retrieves the 5 most relevant chunks
-        self.query_engine = self.index.as_query_engine(
-            llm=self.llm,
-            similarity_top_k=5
-        )
+    def _initialize_index(self):
+        """Attempts to initialize the index and query engine."""
+        try:
+            self.index = VectorStoreIndex.from_vector_store(
+                vector_store=self.vector_store
+            )
+            self.query_engine = self.index.as_query_engine(
+                llm=self.llm,
+                similarity_top_k=5
+            )
+            print("RAGEngine initialized successfully.")
+        except Exception as e:
+            print(f"RAGEngine initialization deferred: {e}")
+            # It's okay if this fails initially (e.g. table doesn't exist yet)
+            # We will retry on first query
+
+    def reload(self):
+        """Forces a reload of the index and query engine."""
+        print("Reloading RAGEngine...")
+        self._initialize_index()
 
     def query(self, query_text: str) -> str:
         """
@@ -55,6 +67,12 @@ class RAGEngine:
         2. Sends context + query to Gemini.
         3. Returns the response.
         """
+        if self.query_engine is None:
+            self._initialize_index()
+
+        if self.query_engine is None:
+             return "Error: Knowledge Base not initialized. Please ingest a document first."
+
         response = self.query_engine.query(query_text)
         return str(response)
 
