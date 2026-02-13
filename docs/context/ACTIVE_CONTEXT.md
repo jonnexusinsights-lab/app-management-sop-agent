@@ -2,24 +2,25 @@
 
 ## Session Metadata
 
-- **Last Updated:** 2026-02-12
-- **Active Role:** Architect
-- **Mode:** PLANNING
+- **Last Updated:** 2026-02-13
+- **Active Role:** Developer
+- **Mode:** EXECUTION
 
 ## Current Objective
 
-Verify Streamlit Web App.
+Migrate to Ollama and update documentation to ACE standards.
 
 ## Current State
 
 ### Working
 
-- Core Backend (Agent, RAG, API) - **Completed**
-- Web Interface (Streamlit) - **Completed**
+- Core Backend (FastAPI + Ollama) - **Completed**
+- Web Interface (HTML/JS) - **Completed**
+- Setup (Ollama Installation) - **Completed**
 
 ### In Progress
 
-- **Verification**: Waiting for user to run verification steps.
+- **Documentation**: Updating artifacts to meet ACE standards.
 
 ### Blocked
 
@@ -27,17 +28,18 @@ Verify Streamlit Web App.
 
 ## Next Steps
 
-1. [ ] Install dependencies: `pip install streamlit`.
-2. [ ] Run `streamlit run src/app/ui.py`.
-3. [ ] Ingest a test SOP via the "Document Ingestion" tab.
-4. [ ] Chat with the agent via the "Chat with Agent" tab.
+1. [x] Migrate to Ollama.
+2. [x] Create ADR-005.
+3. [ ] Finalize documentation updates.
+4. [ ] Commit changes.
 
 ## Active Constraints
 
-- **Stack**: Python, LlamaIndex, LanceDB, Gemini 2.0 Flash.
+- **Stack**: Python, LlamaIndex, LanceDB, Ollama (Llama 3).
 - **Compliance**: Presidio (PII), LangSmith/Arize (Audit).
 
 ## Session Notes
 
-- Transitioned to EXECUTION mode.
-- Initializing project structure.
+- Migrated from Streamlit to FastAPI.
+- Migrated from Gemini to Ollama for local inference.
+- Updated documentation to reflect these changes.

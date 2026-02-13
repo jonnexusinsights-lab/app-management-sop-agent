@@ -17,47 +17,54 @@ The **App Management SOP Agent** is an AI-powered assistant designed to help man
 ## Requirements
 
 - Python 3.11+
-- Google Gemini API Key (for LLM)
+- [Ollama](https://ollama.com/) (running locally)
+- A local model pulled (e.g., `ollama pull llama3`)
 
 ## Setup
 
 > **Fast Track:** standard developers can skip to [docs/setup/QUICKSTART.md](docs/setup/QUICKSTART.md).
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
 
-    ```bash
-    git clone https://github.com/jonnexusinsights-lab/app-management-sop-agent.git
-    cd app-management-sop-agent
-    ```
+   ```bash
+   git clone https://github.com/jonnexusinsights-lab/app-management-sop-agent.git
+   cd app-management-sop-agent
+   ```
 
-2.  **Install dependencies:**
+2. **Install dependencies:**
 
-    ```bash
-    pip install -r requirements.txt
-    # OR
-    pip install -e .
-    ```
+   ```bash
+   pip install -r requirements.txt
+   # OR
+   pip install -e .
+   ```
 
-3.  **Configure Environment:**
-    Copy `.env.example` to `.env` and add your API keys:
+3. **Configure Environment:**
+   Copy `.env.example` to `.env`. You can leave `GOOGLE_API_KEY` empty as we now use Ollama by default.
 
-    ```bash
-    cp .env.example .env
-    ```
+   ```bash
+   cp .env.example .env
+   ```
 
-    - `GOOGLE_API_KEY`: Required for Gemini 2.0 Flash.
+   Ensure Ollama is running:
 
-4.  **Run the App:**
+   ```bash
+   ollama serve
+   # In another terminal, pull the model if you haven't already
+   ollama pull llama3
+   ```
 
-    ```bash
-    # Run with uvicorn directly
-    uvicorn src.api.main:app --reload
+4. **Run the App:**
 
-    # OR run via python script
-    python src/api/main.py
-    ```
+   ```bash
+   # Run with uvicorn directly
+   uvicorn src.api.main:app --reload
 
-    The application will be available at `http://localhost:8000`.
+   # OR run via python script
+   python src/api/main.py
+   ```
+
+   The application will be available at `http://localhost:8000`.
 
 ## Usage
 
@@ -80,6 +87,7 @@ See [docs/adr/](docs/adr/) for detailed Architectural Decision Records.
 - **ADR-002:** Tech Stack
 - **ADR-003:** Architectural Patterns
 - **ADR-004:** Local Embeddings & Schema Management
+- **ADR-005:** Migration to Local LLM (Ollama)
 
 ## Troubleshooting
 

@@ -1,5 +1,5 @@
 from typing import List, Optional
-from llama_index.llms.gemini import Gemini
+from llama_index.llms.ollama import Ollama
 from llama_index.core import VectorStoreIndex, Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
@@ -9,16 +9,17 @@ from src.rag.storage import db_manager
 class RAGEngine:
     """
     Manages the Retrieval-Augmented Generation process.
-    Connects Gemini (LLM) with LanceDB (Vector Store).
+    Connects Ollama (Local LLM) with LanceDB (Vector Store).
     """
     def __init__(self):
         print("Initializing RAGEngine...")
 
-        # Initialize LLM
-        # Note: Ensure the API key and model name are correct in config
-        self.llm = Gemini(
+        # Initialize LLM (Ollama)
+        # request_timeout=300.0 (5 minutes) to allow for slower local generation
+        self.llm = Ollama(
             model=settings.MODEL_NAME,
-            api_key=settings.GOOGLE_API_KEY
+            base_url=settings.OLLAMA_BASE_URL,
+            request_timeout=300.0
         )
 
         # Configure Embeddings globally to avoid OpenAI defaults
