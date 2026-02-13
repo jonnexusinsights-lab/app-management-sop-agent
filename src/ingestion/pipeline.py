@@ -39,25 +39,41 @@ class IngestionPipeline:
         3. Generates embeddings.
         4. Stores in LanceDB.
         """
-        document = Document(text=content, metadata=metadata)
+        try:
+            from src.observability.logger import logger
+            logger.info(f"Processing document with metadata: {metadata}")
 
-        # split document into nodes
-        nodes = self.splitter.get_nodes_from_documents([document])
+            document = Document(text=content, metadata=metadata)
 
-        # Explicitly generate embeddings for each node
-        # LanceDBVectorStore.add requires embeddings to be present
-        for node in nodes:
-            node_embedding = self.embed_model.get_text_embedding(node.get_content())
-            node.embedding = node_embedding
+            # split document into nodes
+            logger.info("Splitting document into nodes...")
+            nodes = self.splitter.get_nodes_from_documents([document])
+            logger.info(f"Created {len(nodes)} nodes.")
 
-        # Batch insert into LanceDB using VectorStore
-        # This handles metadata serialization and schema creation automatically
-        self.vector_store.add(nodes)
+            # Explicitly generate embeddings for each node
+            # LanceDBVectorStore.add requires embeddings to be present
+            logger.info("Generating embeddings for nodes...")
+            for node in nodes:
+                node_embedding = self.embed_model.get_text_embedding(node.get_content())
+                node.embedding = node_embedding
+
+            # Batch insert into LanceDB using VectorStore
+            # This handles metadata serialization and schema creation automatically
+            logger.info("Inserting nodes into LanceDB...")
+            self.vector_store.add(nodes)
+            logger.info("Document processing complete.")
+
+        except Exception as e:
+            from src.observability.logger import logger
+            logger.error(f"Error processing document: {e}")
+            raise e
 
     def ingest_from_text(self, text: str, source: str = "manual_entry"):
         """
         Convenience method for testing/CLI.
         """
+        from src.observability.logger import logger
+        logger.info(f"Ingesting text from source: {source}")
         self.process_document(text, {"source_type": "text", "source": source})
 
 # Singleton instance

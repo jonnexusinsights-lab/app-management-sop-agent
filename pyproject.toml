@@ -20,6 +20,8 @@ dependencies = [
     "python-dotenv",
     "langsmith",
     "streamlit",
+    "python-multipart",
+    "jinja2",
     "pydantic-settings"
 ]
 

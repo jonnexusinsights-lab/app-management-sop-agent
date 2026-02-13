@@ -12,7 +12,7 @@ The **App Management SOP Agent** is an AI-powered assistant designed to help man
 - **Multi-Modal Storage:** Powered by **LanceDB** (embedded) for future support of text, images, and video.
 - **Dual Interface:**
   - **CLI:** For administration and testing.
-  - **Streamlit Web App:** For interactive chat and document ingestion.
+  - **FastAPI Web App:** For interactive chat and document ingestion (replaces Streamlit).
 
 ## Requirements
 
@@ -48,22 +48,29 @@ The **App Management SOP Agent** is an AI-powered assistant designed to help man
     - `GOOGLE_API_KEY`: Required for Gemini 2.0 Flash.
 
 4.  **Run the App:**
+
     ```bash
-    streamlit run src/app/ui.py
+    # Run with uvicorn directly
+    uvicorn src.api.main:app --reload
+
+    # OR run via python script
+    python src/api/main.py
     ```
+
+    The application will be available at `http://localhost:8000`.
 
 ## Usage
 
 ### Ingestion
 
-Go to the **Ingest Document** tab in the Streamlit app. You can upload text files or paste text directly.
+Go to the **Document Ingestion** tab in the Web App (`http://localhost:8000`). You can paste text directly.
 
-- _Note: First run will download the embedding model (~130MB)._
+- _Note: first run will download the embedding model (~130MB)._
 - _Note: Creating the knowledge base happens automatically._
 
 ### Chat
 
-Go to the **Chat** tab to ask questions about your SOPs.
+Go to the **Chat with Agent** tab to ask questions about your SOPs.
 
 ## Architecture
 

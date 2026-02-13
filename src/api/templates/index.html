@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ project_name }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>System Info</h2>
+      <p><strong>Model:</strong> Gemini Pro</p>
+      <p><strong>LanceDB:</strong> ./data/lancedb</p>
+      <button class="btn" onclick="clearChat()">Clear Chat History</button>
+    </div>
+
+    <div class="main-content">
+      <h1>Managerial SOP Assistant</h1>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('chat')">
+          💬 Chat with Agent
+        </div>
+        <div class="tab" onclick="switchTab('ingest')">
+          📂 Document Ingestion
+        </div>
+      </div>
+
+      <div id="chat-tab">
+        <div class="chat-container" id="chat-history">
+          <!-- Messages will appear here -->
+        </div>
+        <div class="chat-input-container">
+          <input
+            type="text"
+            class="chat-input"
+            id="user-input"
+            placeholder="Ask a question about internal SOPs..."
+            onkeypress="handleKeyPress(event)"
+          />
+        </div>
+      </div>
+
+      <div id="ingest-tab" class="hidden">
+        <h2>Ingest New SOPs</h2>
+        <div style="margin-bottom: 1rem; display: flex; gap: 1rem">
+          <label
+            ><input
+              type="radio"
+              name="ingest-type"
+              value="text"
+              checked
+              onchange="toggleIngestType()"
+            />
+            Text</label
+          >
+          <label
+            ><input
+              type="radio"
+              name="ingest-type"
+              value="file"
+              onchange="toggleIngestType()"
+            />
+            File Upload (Coming Soon)</label
+          >
+        </div>
+
+        <div id="text-ingest">
+          <textarea
+            id="sop-text"
+            placeholder="Paste SOP Content Here"
+            style="
+              width: 100%;
+              height: 300px;
+              padding: 1rem;
+              margin-bottom: 1rem;
+            "
+          ></textarea>
+          <input
+            type="text"
+            id="source-name"
+            placeholder="Source Name (e.g., 'Conflict Resolution Policy v2')"
+            style="width: 100%; padding: 0.5rem; margin-bottom: 1rem"
+          />
+          <button class="btn" onclick="ingestText()">Ingest Document</button>
+        </div>
+
+        <div id="file-ingest" class="hidden">
+          <p>
+            File upload (PDF/Docx) will be implemented in the next iteration.
+          </p>
+        </div>
+        <div id="ingest-status" style="margin-top: 1rem"></div>
+      </div>
+    </div>
+
+    <script>
+      function switchTab(tabName) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".tab")
+          [tabName === "chat" ? 0 : 1].classList.add("active");
+
+        document
+          .getElementById("chat-tab")
+          .classList.toggle("hidden", tabName !== "chat");
+        document
+          .getElementById("ingest-tab")
+          .classList.toggle("hidden", tabName !== "ingest");
+      }
+
+      function toggleIngestType() {
+        const isText = document.querySelector(
+          'input[name="ingest-type"][value="text"]',
+        ).checked;
+        document
+          .getElementById("text-ingest")
+          .classList.toggle("hidden", !isText);
+        document
+          .getElementById("file-ingest")
+          .classList.toggle("hidden", isText);
+      }
+
+      async function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          const input = document.getElementById("user-input");
+          const message = input.value.trim();
+          if (!message) return;
+
+          input.value = "";
+          addMessage("user", message);
+
+          // Show loading indicator
+          const loadingId = addMessage("assistant", "Thinking...");
+
+          try {
+            const response = await fetch("/api/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ message: message }),
+            });
+            const data = await response.json();
+
+            // Remove loading and show actual response
+            const history = document.getElementById("chat-history");
+            history.lastElementChild.remove();
+            addMessage("assistant", data.response || data.error);
+          } catch (e) {
+            addMessage("assistant", "Error connecting to server.");
+          }
+        }
+      }
+
+      function addMessage(role, content) {
+        const history = document.getElementById("chat-history");
+        const div = document.createElement("div");
+        div.className = `message ${role}`;
+        // Simple markdown parsing could go here, for now just text
+        div.innerText = content;
+        history.appendChild(div);
+        history.scrollTop = history.scrollHeight;
+        return div.id;
+      }
+
+      async function ingestText() {
+        const text = document.getElementById("sop-text").value;
+        const source = document.getElementById("source-name").value;
+        const statusDiv = document.getElementById("ingest-status");
+
+        if (!text || !source) {
+          statusDiv.innerText =
+            "Please provide both content and a source name.";
+          statusDiv.style.color = "red";
+          return;
+        }
+
+        statusDiv.innerText = "Ingesting...";
+        statusDiv.style.color = "blue";
+
+        try {
+          const formData = new FormData();
+          formData.append("text", text);
+          formData.append("source_name", source);
+
+          const response = await fetch("/api/ingest", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+
+          if (response.ok) {
+            statusDiv.innerText = data.message;
+            statusDiv.style.color = "green";
+            document.getElementById("sop-text").value = "";
+            document.getElementById("source-name").value = "";
+          } else {
+            statusDiv.innerText = "Error: " + data.error;
+            statusDiv.style.color = "red";
+          }
+        } catch (e) {
+          statusDiv.innerText = "Error connecting to server.";
+          statusDiv.style.color = "red";
+        }
+      }
+
+      function clearChat() {
+        document.getElementById("chat-history").innerHTML = "";
+      }
+    </script>
+  </body>
+</html>
