@@ -11,7 +11,7 @@ Get up and running with the App Management SOP Agent in under 5 minutes.
 
 ```bash
 # Clone repository
-git clone <your-repository-url>
+git clone https://github.com/jonnexusinsights-lab/app-management-sop-agent.git
 cd app-management-sop-agent
 
 # Create virtual environment (Recommended)

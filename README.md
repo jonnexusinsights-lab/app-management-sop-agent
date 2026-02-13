@@ -26,7 +26,7 @@ The **App Management SOP Agent** is an AI-powered assistant designed to help man
 1.  **Clone the repository:**
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/jonnexusinsights-lab/app-management-sop-agent.git
     cd app-management-sop-agent
     ```
 
